@@ -61,14 +61,15 @@ class server_class:
             return True
         else:
             return False
-    def set_mail_saying(self,title,call,open_word,conclusion,sign):
+    def set_mail_saying(self,title,call,open_word,conclusion,sign,sender_name):
         self.title=title
         self.call=call
         self.open_word=open_word
         self.conclusion=conclusion
         self.sign=sign
+        self.sender_name=sender_name
     def create_mail(self,student):
-        email=ldl_email_class(self.title,student,self.call,self.sign)
+        email=ldl_email_class(self.sender_name,self.sender.sender_address,self.title,student,self.call,self.sign)
         email.addtext(self.open_word)
         the_list=[]
         for subject in self.school_report_subjects:
@@ -77,7 +78,7 @@ class server_class:
                 subject_tem="排名"
             list=[subject_tem,self.school_report[student][subject]]
             the_list.append(list)
-        email.addtable(the_list,self.title)
+        email.addtable(the_list,"")
         email.addtext(self.conclusion)
         email.complete_mail()
         return email

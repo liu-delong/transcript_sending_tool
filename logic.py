@@ -4,6 +4,8 @@ import os
 import xlwt
 from server import *
 import pickle
+import base64
+import sys
 class ui_with_logic_class(Ui_MainWindow):
      
     def __init__(self,mainwindow:QtWidgets.QMainWindow) -> None:
@@ -82,7 +84,11 @@ class ui_with_logic_class(Ui_MainWindow):
         sign=self.textEdit_4.toPlainText()
         if not sign or sign=="":
             sign=""
-        return title,call,open_word,conclusion,sign
+        
+        sender_name=self.textEdit_7.toPlainText()
+        if not sender_name or sender_name=="":
+            sender_name=""
+        return title,call,open_word,conclusion,sign,sender_name
     def save(self):
         '''
         本函数用于从ui中获取标题，称呼，开头语，结束语，落款，发送者邮箱，授权码信息。并把信息保存在save_path中的init.tsti文件中。
@@ -256,8 +262,8 @@ class ui_with_logic_class(Ui_MainWindow):
         self.save()
         self.uprint("开始发送成绩单...")
         QApplication.processEvents()
-        title,call,open_word,conclusion,sign=self.get_mail_saying()
-        self.server.set_mail_saying(title,call,open_word,conclusion,sign)
+        title,call,open_word,conclusion,sign,sender_name=self.get_mail_saying()
+        self.server.set_mail_saying(title,call,open_word,conclusion,sign,sender_name)
         send_list=self.server.get_student_name_list()
         total_number_of_student=len(send_list)
         success_send_number=0
@@ -305,6 +311,8 @@ class ui_with_logic_class(Ui_MainWindow):
             self.uprint("还未确认发送者邮箱以及授权码，请先确认发送者邮箱及授权码")
             return
         self.save()
+        title,call,open_word,conclusion,sign,sender_name=self.get_mail_saying()
+        self.server.set_mail_saying(title,call,open_word,conclusion,sign,sender_name)
         self.now_choose_student=self.comboBox.currentText()
         self.show_preview_by_name(self.now_choose_student)
         self.uprint(self.now_choose_student+"成绩单正在发送。。。")
@@ -319,7 +327,8 @@ class ui_with_logic_class(Ui_MainWindow):
         if not self.server.already_login():
             self.uprint("还未确认发送者邮箱以及授权码，请先确认发送者邮箱及授权码")
             return
-        
+        title,call,open_word,conclusion,sign,sender_name=self.get_mail_saying()
+        self.server.set_mail_saying(title,call,open_word,conclusion,sign,sender_name)
         self.uprint("开始发送成绩单...")
         self.save()
         sending_status_message_from_ui_table=self.get_sending_status_message_from_ui_table()
